@@ -328,15 +328,18 @@ class TreeView extends ScrollView
 
   moveSelectedEntry: ->
     if @hasFocus()
-      entry = @selectedEntry()
-      return unless entry and entry isnt @root
-      oldPath = entry.getPath()
+      entries = @getSelectedEntries()
+      return unless entries.length > 0
+      oldPaths = _.map(entries, (entry) =>
+        entry.getPath() unless entry is @root
+      )
     else
-      oldPath = @getActivePath()
+      oldPaths = []
+      oldPaths.push @getActivePath() if @getActivePath()?
 
-    if oldPath
+    if oldPaths and oldPaths.length > 0
       MoveDialog ?= require './move-dialog'
-      dialog = new MoveDialog(oldPath)
+      dialog = new MoveDialog(oldPaths)
       dialog.attach()
 
   # Get the outline of a system call to the current platform's file manager.
